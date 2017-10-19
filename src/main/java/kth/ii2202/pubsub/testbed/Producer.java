@@ -5,8 +5,7 @@ package kth.ii2202.pubsub.testbed;
 
 import java.util.Arrays;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * MessageProducer follows the Template Method design pattern
@@ -39,21 +38,23 @@ public abstract class Producer {
 	}
 
 	private void sendMessages(int batchSize, double messageSizeInByte) {
-//		ExecutorService executor = Executors.newCachedThreadPool();
-//		for (int i = 0; i < batchSize; i++){
-//			executor.execute(new MessageSender(messageSizeInByte));
-//		}
-//		waitForAllExecutersToComplete(executor);
-
-
-		String msg=createMessage(messageSizeInByte);
+		ExecutorService executor = new ThreadPoolExecutor(4, 4,
+				60L, TimeUnit.SECONDS,
+				new LinkedBlockingQueue<Runnable>(Integer.MAX_VALUE/10));
 		for (int i = 0; i < batchSize; i++){
-			try {
-				sendMessage(msg);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			executor.execute(new MessageSender(messageSizeInByte));
 		}
+		waitForAllExecutersToComplete(executor);
+
+
+//		String msg=createMessage(messageSizeInByte);
+//		for (int i = 0; i < batchSize; i++){
+//			try {
+//				sendMessage(msg);
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 
 	private void waitForAllExecutersToComplete(ExecutorService executor) {

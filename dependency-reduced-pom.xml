@@ -38,6 +38,11 @@
           </filters>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.activemq.tooling</groupId>
+        <artifactId>activemq-perf-maven-plugin</artifactId>
+        <version>5.15.1</version>
+      </plugin>
     </plugins>
   </build>
 </project>
