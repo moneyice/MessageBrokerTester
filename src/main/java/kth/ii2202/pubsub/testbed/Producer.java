@@ -18,6 +18,10 @@ import java.util.concurrent.*;
 public abstract class Producer {
 	protected final String brokerUrl;
 	protected final String queueName;
+	private String large_size_string_cache=null;
+
+
+
 
 	private String createMessage(double messageSizeInByte) {
 		StringBuilder message = new StringBuilder();
@@ -106,13 +110,17 @@ public abstract class Producer {
 		}
 		
 		private String resizeMessage() {
-			Double dMsgSize = messageSizeInByte / 2;
-			int msgSize = dMsgSize.intValue();
-			
-			char[] chars = new char[msgSize];
-			Arrays.fill(chars, 'a');
-			
-			return new String(chars);
+			if(large_size_string_cache==null){
+				Double dMsgSize = messageSizeInByte/2;
+				int msgSize = dMsgSize.intValue();
+
+				char[] chars = new char[msgSize];
+				Arrays.fill(chars, 'a');
+
+				large_size_string_cache= new String(chars);
+			}
+			return large_size_string_cache;
+
 		}
 		
 	}
