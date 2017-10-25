@@ -36,7 +36,7 @@ public class ActiveMqProducer extends Producer {
 		session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
 		Destination destination = session.createQueue(queueName);
 		producer = session.createProducer(destination);
-		producer.setDeliveryMode(DeliveryMode.PERSISTENT);
+		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
 	}
 
 	@Override

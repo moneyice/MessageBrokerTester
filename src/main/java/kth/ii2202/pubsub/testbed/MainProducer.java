@@ -47,6 +47,9 @@ public class MainProducer {
 			LocalTime end=LocalTime.now();
 
 			int duraion=end.toSecondOfDay()-start.toSecondOfDay();
+			if(duraion==0){
+				duraion=1;
+			}
 			logger.info("End sending: " + LocalDateTime.now());
 			int amount=batchSize;
 			logger.info("Sent "+ amount +" messages, during "+ duraion+ " throughput: "+(amount/duraion));

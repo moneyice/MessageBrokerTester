@@ -6,6 +6,7 @@ package kth.ii2202.pubsub.testbed;
 import kth.ii2202.pubsub.testbed.activemq.ActiveMqProducer;
 import kth.ii2202.pubsub.testbed.kafka.KafkaMsgProducer;
 import kth.ii2202.pubsub.testbed.rabbitmq.RabbitMqProducer;
+import kth.ii2202.pubsub.testbed.rocketmq.RocketMqProducer;
 import kth.ii2202.pubsub.testbed.sqs.SQSProducer;
 
 /**
@@ -18,13 +19,15 @@ public class ProducerFactory {
 	private static final String BROKER_RABBITMQ = "rabbitmq";
 	private static final String BROKER_KAFKA = "kafka";
 	private static final String BROKER_SQS = "sqs";
-	
+	private static final String BROKER_ROCKETMQ = "rocketmq";
+
 	private static final String PROP_QUEUE_NAME = "main.queue.name";
 	
 	private static final String PROP_ACTIVEMQ_URL = "broker.activemq.url";
 	private static final String PROP_RABBITMQ_URL = "broker.rabbitmq.url";
 	private static final String PROP_KAFKA_URL = "broker.kafka.url";
 	private static final String PROP_SQS_URL = "broker.sqs.url";
+	private static final String PROP_ROCKETMQ_URL = "broker.rocketmq.url";
 	
 	public static Producer getMessageProducer() throws Exception {
 		Context context = Context.getInstance();
@@ -40,7 +43,9 @@ public class ProducerFactory {
 			producer = new KafkaMsgProducer(context.getProperty(PROP_KAFKA_URL), queueName);
 		} else if(BROKER_SQS.equals(brokerType)) {
 			producer = new SQSProducer(context.getProperty(PROP_SQS_URL), queueName);
-		} else {
+		} else if(BROKER_ROCKETMQ.equals(brokerType)) {
+			producer = new RocketMqProducer(context.getProperty(PROP_ROCKETMQ_URL), queueName);
+		}else {
 			throw new Exception("Invalid broker type specified");
 		}
 		
