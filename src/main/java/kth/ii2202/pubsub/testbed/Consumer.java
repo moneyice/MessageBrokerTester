@@ -34,7 +34,9 @@ public abstract class Consumer {
 	protected abstract void createConnection() throws Exception;
 	
 	protected void logMessage(String message) {
-		new Thread(new ConsumerLog(message, System.currentTimeMillis())).start();
+		System.out.println(message);
+
+//		new Thread(new ConsumerLog(message, System.currentTimeMillis())).start();
 	}
 	
 	private class ConsumerLog implements Runnable {
