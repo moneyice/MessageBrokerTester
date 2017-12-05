@@ -34,7 +34,7 @@ public abstract class Consumer {
 	protected abstract void createConnection() throws Exception;
 	
 	protected void logMessage(String message) {
-		System.out.println(message);
+		//System.out.println(message);
 
 //		new Thread(new ConsumerLog(message, System.currentTimeMillis())).start();
 	}
