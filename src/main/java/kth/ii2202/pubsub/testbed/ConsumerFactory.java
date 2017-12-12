@@ -3,15 +3,19 @@
  */
 package kth.ii2202.pubsub.testbed;
 
+import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import kth.ii2202.pubsub.testbed.activemq.ActiveMqConsumer;
-import kth.ii2202.pubsub.testbed.activemq.ActiveMqProducer;
 import kth.ii2202.pubsub.testbed.kafka.KafkaMsgConsumer;
-import kth.ii2202.pubsub.testbed.kafka.KafkaMsgProducer;
-import kth.ii2202.pubsub.testbed.rabbitmq.RabbitMqProducer;
 import kth.ii2202.pubsub.testbed.rabbitmq.RabbitMqReceiver;
 import kth.ii2202.pubsub.testbed.rocketmq.RocketMqConsumer;
 import kth.ii2202.pubsub.testbed.sqs.SQSConsumer;
-import kth.ii2202.pubsub.testbed.sqs.SQSProducer;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author pradeeppeiris
@@ -32,14 +36,32 @@ public class ConsumerFactory {
 	private static final String PROP_KAFKA_URL = "broker.kafka.url";
 	private static final String PROP_SQS_URL = "broker.sqs.url";
 	private static final String PROP_ROCKETMQ_URL = "broker.rocketmq.url";
+	private static final String PROP_QUEUE_NAME_FILE = "main.queue.name.file";
 
 
-	public static Consumer getMessageConsumer() throws Exception {
+	public static List<Consumer> getMessageConsumer() throws Exception {
 		Context context = Context.getInstance();
 		String brokerType = context.getProperty(PROP_BROKER);
 		String queueName = context.getProperty(PROP_QUEUE_NAME);
-		
-		Consumer consumer;
+		String queueNameFile=context.getProperty(PROP_QUEUE_NAME_FILE);
+
+		List<String> queueNameList=getQueueNameList(queueNameFile);
+		if(queueNameList==null||queueNameList.isEmpty()){
+			return null;
+		}
+
+		List<Consumer> consumerList= Lists.newArrayList();
+		for (String queueNameString:queueNameList) {
+			Consumer consumer=createConsumer(context, brokerType, queueNameString);
+			consumerList.add(consumer);
+		}
+
+
+		return consumerList;
+	}
+
+	private static Consumer createConsumer(Context context, String brokerType, String queueName) throws Exception {
+		Consumer consumer=null;
 		if(BROKER_ACTIVEMQ.equals(brokerType)) {
 			consumer = new ActiveMqConsumer(context.getProperty(PROP_ACTIVEMQ_URL), queueName);
 		} else if(BROKER_RABBITMQ.equals(brokerType)) {
@@ -54,5 +76,16 @@ public class ConsumerFactory {
 			throw new Exception("Invalid broker type specified");
 		}
 		return consumer;
+	}
+
+	private static List<String> getQueueNameList(String queueNameFile) {
+		List<String> list= null;
+		try {
+			File file = new File(ConsumerFactory.class.getClassLoader().getResource(queueNameFile).getFile());
+			list = Files.readLines(file, Charset.defaultCharset());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

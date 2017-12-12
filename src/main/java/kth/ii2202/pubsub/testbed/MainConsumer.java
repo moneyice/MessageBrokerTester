@@ -1,5 +1,7 @@
 package kth.ii2202.pubsub.testbed;
 
+import java.util.List;
+
 /**
  * @author pradeeppeiris
  * 
@@ -21,7 +23,10 @@ public class MainConsumer {
 	}
 
 	private static void startConsumer() throws Exception {
-		Consumer consumer = ConsumerFactory.getMessageConsumer();
-		consumer.receiveMessages();
+		List<Consumer> consumerList = ConsumerFactory.getMessageConsumer();
+		for (Consumer consumer:consumerList){
+			Runnable r=new ConsumerWorker(consumer);
+			new Thread(r).start();
+		}
 	}
 }

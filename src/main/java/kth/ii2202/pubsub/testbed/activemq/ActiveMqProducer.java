@@ -37,7 +37,7 @@ public class ActiveMqProducer extends Producer {
 		Destination destination = session.createQueue(queueName);
 		producer = session.createProducer(destination);
 		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-	}
+}
 
 	@Override
 	protected void sendMessage(String message) throws Exception {

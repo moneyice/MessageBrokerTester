@@ -14,11 +14,14 @@ import org.apache.logging.log4j.Logger;
  * java -cp "target/testbed-1.0.jar:config" kth.ii2202.pubsub.testbed.Main consumer
  */
 public abstract class Consumer {
+
 	private static final Logger logger = LogManager.getLogger(Consumer.class);
+	private static final int INTERVAL_PRINT=1000;
 
 	protected String brokerUrl;
 	protected final String queueName;
 
+	private int index=0;
 	public Consumer(String brokerUrl, String queueName) {
 		this.brokerUrl = brokerUrl;
 		this.queueName = queueName;
@@ -34,8 +37,12 @@ public abstract class Consumer {
 	protected abstract void createConnection() throws Exception;
 	
 	protected void logMessage(String message) {
-		//System.out.println(message);
-
+		if(index>INTERVAL_PRINT){
+			System.out.println(queueName+" ----------->  "+message);
+			index=0;
+		}else{
+			index++;
+		}
 //		new Thread(new ConsumerLog(message, System.currentTimeMillis())).start();
 	}
 	
