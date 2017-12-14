@@ -16,10 +16,12 @@ import org.apache.logging.log4j.Logger;
 public abstract class Consumer {
 
 	private static final Logger logger = LogManager.getLogger(Consumer.class);
-	private static final int INTERVAL_PRINT=1000;
+	private static final int INTERVAL_PRINT=10000;
 
 	protected String brokerUrl;
 	protected final String queueName;
+	protected String username;
+	protected String password;
 
 	private int index=0;
 	public Consumer(String brokerUrl, String queueName) {
@@ -32,7 +34,23 @@ public abstract class Consumer {
 		createConnection();
 		listenForMessages();
 	}
-	
+
+	public String getUsername() {
+		return username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
 	public abstract void listenForMessages() throws Exception;
 	protected abstract void createConnection() throws Exception;
 	

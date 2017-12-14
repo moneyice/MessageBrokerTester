@@ -35,7 +35,7 @@ public class ActiveMqConsumer extends Consumer implements ExceptionListener {
 	
 	@Override
 	protected void createConnection() throws Exception {
-		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
+		ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(username,password,brokerUrl);
 		connection = connectionFactory.createConnection();
 		connection.start();
 		connection.setExceptionListener(this);

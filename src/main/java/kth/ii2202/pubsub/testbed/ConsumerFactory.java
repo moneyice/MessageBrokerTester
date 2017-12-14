@@ -30,7 +30,8 @@ public class ConsumerFactory {
 	private static final String BROKER_SQS = "sqs";
 	
 	private static final String PROP_QUEUE_NAME = "main.queue.name";
-	
+	private static final String PROP_USERNAME = "broker.username";
+	private static final String PROP_PASSWORD = "broker.password";
 	private static final String PROP_ACTIVEMQ_URL = "broker.activemq.url";
 	private static final String PROP_RABBITMQ_URL = "broker.rabbitmq.url";
 	private static final String PROP_KAFKA_URL = "broker.kafka.url";
@@ -44,6 +45,8 @@ public class ConsumerFactory {
 		String brokerType = context.getProperty(PROP_BROKER);
 		String queueName = context.getProperty(PROP_QUEUE_NAME);
 		String queueNameFile=context.getProperty(PROP_QUEUE_NAME_FILE);
+		String username=context.getProperty(PROP_USERNAME);
+		String password=context.getProperty(PROP_PASSWORD);
 
 		List<String> queueNameList=getQueueNameList(queueNameFile);
 		if(queueNameList==null||queueNameList.isEmpty()){
@@ -52,7 +55,7 @@ public class ConsumerFactory {
 
 		List<Consumer> consumerList= Lists.newArrayList();
 		for (String queueNameString:queueNameList) {
-			Consumer consumer=createConsumer(context, brokerType, queueNameString);
+			Consumer consumer=createConsumer(context, brokerType, queueNameString,username,password);
 			consumerList.add(consumer);
 		}
 
@@ -60,7 +63,7 @@ public class ConsumerFactory {
 		return consumerList;
 	}
 
-	private static Consumer createConsumer(Context context, String brokerType, String queueName) throws Exception {
+	private static Consumer createConsumer(Context context, String brokerType, String queueName, String username, String password) throws Exception {
 		Consumer consumer=null;
 		if(BROKER_ACTIVEMQ.equals(brokerType)) {
 			consumer = new ActiveMqConsumer(context.getProperty(PROP_ACTIVEMQ_URL), queueName);
@@ -75,6 +78,13 @@ public class ConsumerFactory {
 		} else {
 			throw new Exception("Invalid broker type specified");
 		}
+		if(username!=null){
+			consumer.setUsername(username);
+		}
+		if(password!=null){
+			consumer.setPassword(password);
+		}
+
 		return consumer;
 	}
 
