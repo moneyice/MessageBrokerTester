@@ -53,8 +53,11 @@ public abstract class Consumer {
 
 	public abstract void listenForMessages() throws Exception;
 	protected abstract void createConnection() throws Exception;
-	
+	int number=0;
 	protected void logMessage(String message) {
+		number++;
+		System.out.println(queueName+" consumed  number "+ number);
+
 		if(index>INTERVAL_PRINT){
 			System.out.println(queueName+" ----------->  "+message);
 			index=0;

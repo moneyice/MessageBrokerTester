@@ -11,9 +11,9 @@ import kth.ii2202.pubsub.testbed.rabbitmq.RabbitMqReceiver;
 import kth.ii2202.pubsub.testbed.rocketmq.RocketMqConsumer;
 import kth.ii2202.pubsub.testbed.sqs.SQSConsumer;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -90,12 +90,31 @@ public class ConsumerFactory {
 
 	private static List<String> getQueueNameList(String queueNameFile) {
 		List<String> list= null;
+		list=readFileByLines(Context.class.getClassLoader().getResourceAsStream(queueNameFile));
+		return list;
+	}
+	public static List<String> readFileByLines(InputStream inputStream) {
+		List<String> lines = new ArrayList();
+		BufferedReader reader = null;
 		try {
-			File file = new File(ConsumerFactory.class.getClassLoader().getResource(queueNameFile).getFile());
-			list = Files.readLines(file, Charset.defaultCharset());
+			reader = new BufferedReader(new InputStreamReader(inputStream));
+			String tempString = null;
+			// 一次读入一行，直到读入null为文件结束
+			while ((tempString = reader.readLine()) != null) {
+				// 显示行号
+				lines.add(tempString);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			if (reader != null) {
+				try {
+					reader.close();
+					inputStream.close();
+				} catch (IOException e1) {
+				}
+			}
 		}
-		return list;
+		return lines;
 	}
 }
